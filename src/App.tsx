@@ -11,6 +11,8 @@ import Stack from "@mui/material/Stack";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Slider from "@mui/material/Slider";
+import Divider from "@mui/material/Divider";
+
 function App() {
   const [command, setCommand] = useState("Generate super-secure password!");
   const [message, setMessage] = useState("");
@@ -88,9 +90,10 @@ function App() {
               : null}
           </Stack>
         </Box>
+        <Divider>LENGTH REQUIREMENTS</Divider>
         <Stack direction="row" spacing={2} sx={{ width: 600 }}>
           <FormControlLabel
-            sx={{ width: 400 }}
+            sx={{ width: 600 }}
             control={
               <Checkbox
                 checked={checkLength}
@@ -100,7 +103,7 @@ function App() {
                 inputProps={{ "aria-label": "controlled" }}
               />
             }
-            label="Check password length"
+            label="Password length must be at least"
           />
           <Slider
             aria-label="Password length"
@@ -114,7 +117,92 @@ function App() {
             }}
           />
         </Stack>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password length must be a prime number: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97"
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password length must be a from the Fibonacci sequence: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89"
+        />
+        <Divider>SPECIAL CHARACTER REQUIREMENTS</Divider>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password must contain a lowercase, and an uppercase letter"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password must include one of these special characters: '! @ # $ % ^ & * ( ) _ + - = [ ] { } | ; : , . < > ?'"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password must include one of these emojis: 😀, 😎, 😂, 👍, 🎉, 💡, 🌟, 🔑"
+        />
+        <Divider>ARBITRARY REQUIREMENTS (THE GOOD STUFF)</Divider>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Password must be a palindrome"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="AlL tHe LeTtErS iN tHe PaSsWoRd MuSt AlTeRnAtE bEtWeEn UpPeRcAsE aNd LoWeRcAsE"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="Must contain color in HEX"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={false}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+            />
+          }
+          label="must include word"
+        />
       </Stack>
+
       <Snackbar
         open={open}
         autoHideDuration={5000}
