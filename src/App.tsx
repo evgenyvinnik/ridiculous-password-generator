@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import { popularEmojis } from "./emoji";
 import { words } from "./words";
 import { colors } from "./colors";
+import GraphemeSplitter from "grapheme-splitter";
 
 function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,52 +54,13 @@ function App() {
   const [checkPalindrome, setCheckPalindrome] = useState(false);
   const [checkColorInHex, setCheckColorInHex] = useState(false);
   const [checkWord, setCheckWord] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const splitter = new GraphemeSplitter();
 
   useEffect(() => {
     setColor(colors[Math.floor(Math.random() * colors.length)]);
     setWord(words[Math.floor(Math.random() * words.length)]);
   }, []);
-
-  const isPalindrome = (str: string) => {
-    // Function to get code point at a specified position
-    const getCodePoint = (str: string, index: number) => {
-      const first = str.charCodeAt(index);
-      if (first >= 0xd800 && first <= 0xdbff) {
-        const second = str.charCodeAt(index + 1);
-        if (second >= 0xdc00 && second <= 0xdfff) {
-          return (first - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
-        }
-      }
-      return first;
-    };
-
-    let left = 0;
-    let right = str.length - 1;
-
-    while (left < right) {
-      const leftCodePoint = getCodePoint(str, left);
-      const rightCodePoint = getCodePoint(str, right);
-
-      // Skip non-letter characters
-      if (!/\p{L}/u.test(String.fromCodePoint(leftCodePoint))) {
-        left++;
-        continue;
-      }
-      if (!/\p{L}/u.test(String.fromCodePoint(rightCodePoint))) {
-        right--;
-        continue;
-      }
-
-      if (leftCodePoint !== rightCodePoint) {
-        return false;
-      }
-
-      left++;
-      right--;
-    }
-
-    return true;
-  };
 
   /* main method - password checking */
   useEffect(() => {
@@ -158,6 +120,22 @@ function App() {
       }
     }
 
+    const isPalindrome = (str: string) => {
+      const graphemes = splitter.splitGraphemes(str);
+
+      let left = 0;
+      let right = graphemes.length - 1;
+
+      while (left < right) {
+        if (graphemes[left] !== graphemes[right]) {
+          return false;
+        }
+        left++;
+        right--;
+      }
+
+      return true;
+    };
     // arbitrary
     if (checkPalindrome) {
       if (!isPalindrome(password)) {
@@ -199,6 +177,7 @@ function App() {
     password,
     passwordLength,
     primeNumbers,
+    splitter,
     word,
   ]);
 
@@ -316,7 +295,7 @@ function App() {
             />
           }
           label={`Password must include one of these emojis: ${popularEmojis.join(
-            " "
+            ""
           )}`}
         />
         <Divider>ARBITRARY REQUIREMENTS (THE GOOD STUFF)</Divider>
