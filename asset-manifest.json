@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ridiculous-password-generator/static/css/main.f64e9bab.css",
+    "main.js": "/ridiculous-password-generator/static/js/main.3d78cbe8.js",
+    "index.html": "/ridiculous-password-generator/index.html",
+    "main.f64e9bab.css.map": "/ridiculous-password-generator/static/css/main.f64e9bab.css.map",
+    "main.3d78cbe8.js.map": "/ridiculous-password-generator/static/js/main.3d78cbe8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f64e9bab.css",
+    "static/js/main.3d78cbe8.js"
+  ]
+}
