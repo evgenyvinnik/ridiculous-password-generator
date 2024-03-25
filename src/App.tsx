@@ -208,7 +208,7 @@ function App() {
         <Toolbar>
           <Button variant="outlined">Outlined</Button>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Super-secure password generator!
+            Create your next super-secure password!
           </Typography>
         </Toolbar>
       </AppBar>
