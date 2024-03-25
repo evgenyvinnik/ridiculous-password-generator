@@ -9,23 +9,32 @@ Tool for generating and checking passwords following some ridiculous rules:
   - must include special character
   - must include a digit
 - Non-standard rules
-  - must include an emoji
-    - must be a specific emoji - like a sad expression, or herbivore animal
+  - must include a specific emoji
   - must be a palindrome
-  - must include all letters for English alphabet
-    - can't include letters AA, BB, CC
-  - Digits must add up to XX
-  - must contain word XXX
-    - must encode this word in the Morse code
-  - must include a Roman numeral
-  - must include a two letter symbol from the periodic table
-  - must include name of XXX country
+  - must contain word XXXXX
   - all letters should be be lower-case, upper-case alternating
   - password must include this color in hex
-  - password length must be a prime number
+  - password length must be a prime number, or from Fibbonacci sequence
 
 Made for https://github.com/Algorithm-Arena/weekly-challenge-10-password-generator
 Inspiration is taken from https://neal.fun/password-game/ as well
+
+# Some rules I have considered during brainstorming
+
+- must include an emoji
+  - must be a specific emoji - like a sad expression, or herbivore animal
+- must be a palindrome
+- must include all letters for English alphabet
+  - can't include letters AA, BB, CC
+- Digits must add up to XX
+- must contain word XXX
+  - must encode this word in the Morse code
+- must include a Roman numeral
+- must include a two letter symbol from the periodic table
+- must include name of XXX country
+- all letters should be be lower-case, upper-case alternating
+- password must include this color in hex
+- password length must be a prime number
 
 # Additional rules suggested by AI
 
