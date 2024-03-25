@@ -1,61 +1,160 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import Snackbar from "@mui/material/Snackbar";
 import Box from "@mui/material/Box";
 import { AppBar, Toolbar } from "@mui/material";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Slider from "@mui/material/Slider";
 import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import { popularEmojis } from "./emoji";
+import { words } from "./words";
+import { colors } from "./colors";
 
 function App() {
-  const [command, setCommand] = useState("Generate super-secure password!");
-  const [message, setMessage] = useState("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const primeNumbers = [
+    1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67,
+    71, 73, 79, 83, 89, 97,
+  ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fibonacciNumbers = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
-  const [open, setOpen] = useState(false);
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
-
+  // states
   const [password, setPassword] = useState("");
   const [passwordLength, setPasswordLength] = useState(0);
-
+  const [minLength, setMinLength] = useState(16);
+  const [color, setColor] = useState(colors[0]);
+  const [word, setWord] = useState(words[0]);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const generatePassword = () => {};
 
-  // rules
+  // check
   const [checkLength, setCheckLength] = useState(false);
-  const [minLength, setMinLength] = useState(16);
+  const [checkPrimeNumber, setCheckPrimeNumber] = useState(false);
+  const [checkFibonacciNumber, setCheckFibonacciNumber] = useState(false);
 
-  const checkPassword = (input: string) => {
-    const inputLength = input.length;
+  const [checkLetters, setCheckLetters] = useState(false);
+  const [checkSpecialCharacters, setCheckSpecialCharacters] = useState(false);
+  const [checkEmoji, setCheckEmoji] = useState(false);
+
+  const [checkPalindrome, setCheckPalindrome] = useState(false);
+  const [checkColorInHex, setCheckColorInHex] = useState(false);
+  const [checkWord, setCheckWord] = useState(false);
+
+  useEffect(() => {
+    setColor(colors[Math.floor(Math.random() * colors.length)]);
+    setWord(words[Math.floor(Math.random() * words.length)]);
+  }, []);
+
+  /* main method - password checking */
+  useEffect(() => {
+    const passwordUppercase = password.toUpperCase();
+
     setError(false);
     setErrorMessage("");
+
+    // length
     if (checkLength) {
-      if (inputLength < minLength) {
+      if (passwordLength < minLength) {
         setError(true);
         setErrorMessage("Increase password length");
       }
     }
-    setPassword(input);
-    setPasswordLength(inputLength);
-    //setError(true);
-  };
+    if (checkPrimeNumber) {
+      if (!primeNumbers.includes(passwordLength)) {
+        setError(true);
+        setErrorMessage("Password length should be a prime number");
+      }
+    }
+
+    if (checkFibonacciNumber) {
+      if (!fibonacciNumbers.includes(passwordLength)) {
+        setError(true);
+        setErrorMessage(
+          "Password length should be from the Fibonacci sequence"
+        );
+      }
+    }
+
+    // characters
+    if (checkLetters) {
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasLowercase = /[a-z]/.test(password);
+      if (!hasUppercase || !hasLowercase) {
+        setError(true);
+        setErrorMessage(
+          `Password must include at least one lowercase and at least one uppercase character`
+        );
+      }
+    }
+
+    if (checkSpecialCharacters) {
+      const hasSpecial = /[!@#$%^&*()_+\-=\\[\]{}|;:,.<>?]/.test(password);
+      if (!hasSpecial) {
+        setError(true);
+        setErrorMessage(`Password must include at least one special character`);
+      }
+    }
+
+    if (checkEmoji) {
+      const hasEmoji = /(?:🤣|😅|😭)/.test(password);
+      if (!hasEmoji) {
+        setError(true);
+        setErrorMessage(`Password must include an emoji`);
+      }
+    }
+
+    // arbitrary
+    if (checkPalindrome) {
+      const reversed = password.split("").reverse().join("");
+      if (password !== reversed) {
+        setError(true);
+        setErrorMessage(`Password must be a palindrome`);
+      }
+    }
+
+
+
+    if (checkColorInHex) {
+      if (!passwordUppercase.includes(color.hex)) {
+        setError(true);
+        setErrorMessage(
+          `Password must include color ${color.name.toLowerCase()} in hex`
+        );
+      }
+    }
+
+    if (checkWord) {
+      if (!passwordUppercase.includes(word.toUpperCase())) {
+        setError(true);
+        setErrorMessage(`Password must include word ${word}`);
+      }
+    }
+  }, [
+    checkColorInHex,
+    checkEmoji,
+    checkFibonacciNumber,
+    checkLength,
+    checkLetters,
+    checkPalindrome,
+    checkPrimeNumber,
+    checkSpecialCharacters,
+    checkWord,
+    color.hex,
+    color.name,
+    fibonacciNumbers,
+    minLength,
+    password,
+    passwordLength,
+    primeNumbers,
+    word,
+  ]);
 
   return (
     <div className="App">
@@ -63,12 +162,8 @@ function App() {
         <Toolbar>
           <Button variant="outlined">Outlined</Button>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {command}
+            Super-secure password generator!
           </Typography>
-
-          <Button color="inherit" onClick={generatePassword}>
-            Generate
-          </Button>
         </Toolbar>
       </AppBar>
       <Stack spacing={2} my={4}>
@@ -82,12 +177,14 @@ function App() {
               value={password}
               helperText={errorMessage}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                checkPassword(event.target.value);
+                setPassword(event.target.value);
+                setPasswordLength(event.target.value.length);
               }}
             />
-            {checkLength
-              ? `password length: ${passwordLength}/${minLength}`
-              : null}
+            <Typography variant="h6" gutterBottom>
+              password length: {passwordLength}
+              {checkLength ? "/" + minLength : null}
+            </Typography>
           </Stack>
         </Box>
         <Divider>LENGTH REQUIREMENTS</Divider>
@@ -120,18 +217,22 @@ function App() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkPrimeNumber}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckPrimeNumber(event.target.checked);
+              }}
             />
           }
-          label="Password length must be a prime number: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97"
+          label="Password length must be a prime number: 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97"
         />
 
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkFibonacciNumber}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckFibonacciNumber(event.target.checked);
+              }}
             />
           }
           label="Password length must be a from the Fibonacci sequence: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89"
@@ -140,8 +241,10 @@ function App() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkLetters}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckLetters(event.target.checked);
+              }}
             />
           }
           label="Password must contain a lowercase, and an uppercase letter"
@@ -149,8 +252,10 @@ function App() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkSpecialCharacters}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckSpecialCharacters(event.target.checked);
+              }}
             />
           }
           label="Password must include one of these special characters: '! @ # $ % ^ & * ( ) _ + - = [ ] { } | ; : , . < > ?'"
@@ -158,18 +263,24 @@ function App() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkEmoji}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckEmoji(event.target.checked);
+              }}
             />
           }
-          label="Password must include one of these emojis: 😀, 😎, 😂, 👍, 🎉, 💡, 🌟, 🔑"
+          label={`Password must include one of these emojis: ${popularEmojis.join(
+            " "
+          )}`}
         />
         <Divider>ARBITRARY REQUIREMENTS (THE GOOD STUFF)</Divider>
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkPalindrome}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckPalindrome(event.target.checked);
+              }}
             />
           }
           label="Password must be a palindrome"
@@ -177,38 +288,28 @@ function App() {
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkColorInHex}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckColorInHex(event.target.checked);
+              }}
             />
           }
-          label="AlL tHe LeTtErS iN tHe PaSsWoRd MuSt AlTeRnAtE bEtWeEn UpPeRcAsE aNd LoWeRcAsE"
+          label={`Must contain color "${color.name.toLocaleLowerCase()}" ${
+            color.rgb
+          } in HEX -> ${color.hex}`}
         />
         <FormControlLabel
           control={
             <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              checked={checkWord}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setCheckWord(event.target.checked);
+              }}
             />
           }
-          label="Must contain color in HEX"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={false}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-            />
-          }
-          label="must include word"
+          label={`must include word: ${word}`}
         />
       </Stack>
-
-      <Snackbar
-        open={open}
-        autoHideDuration={5000}
-        onClose={handleClose}
-        message={message}
-      />
     </div>
   );
 }
