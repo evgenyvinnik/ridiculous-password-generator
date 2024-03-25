@@ -33,6 +33,13 @@ function App() {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const escapedEmojis = popularEmojis
+    .map((emoji) => emoji.replace(/[-\\/\\^$*+?.()|[\]{}]/g, "\\$&"))
+    .join("|");
+
+  // Creating a regex pattern
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const emojisRegex = new RegExp(`(?:${escapedEmojis})`);
 
   // check
   const [checkLength, setCheckLength] = useState(false);
@@ -51,6 +58,47 @@ function App() {
     setColor(colors[Math.floor(Math.random() * colors.length)]);
     setWord(words[Math.floor(Math.random() * words.length)]);
   }, []);
+
+  const isPalindrome = (str: string) => {
+    // Function to get code point at a specified position
+    const getCodePoint = (str: string, index: number) => {
+      const first = str.charCodeAt(index);
+      if (first >= 0xd800 && first <= 0xdbff) {
+        const second = str.charCodeAt(index + 1);
+        if (second >= 0xdc00 && second <= 0xdfff) {
+          return (first - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
+        }
+      }
+      return first;
+    };
+
+    let left = 0;
+    let right = str.length - 1;
+
+    while (left < right) {
+      const leftCodePoint = getCodePoint(str, left);
+      const rightCodePoint = getCodePoint(str, right);
+
+      // Skip non-letter characters
+      if (!/\p{L}/u.test(String.fromCodePoint(leftCodePoint))) {
+        left++;
+        continue;
+      }
+      if (!/\p{L}/u.test(String.fromCodePoint(rightCodePoint))) {
+        right--;
+        continue;
+      }
+
+      if (leftCodePoint !== rightCodePoint) {
+        return false;
+      }
+
+      left++;
+      right--;
+    }
+
+    return true;
+  };
 
   /* main method - password checking */
   useEffect(() => {
@@ -103,7 +151,7 @@ function App() {
     }
 
     if (checkEmoji) {
-      const hasEmoji = /(?:🤣|😅|😭)/.test(password);
+      const hasEmoji = emojisRegex.test(password);
       if (!hasEmoji) {
         setError(true);
         setErrorMessage(`Password must include an emoji`);
@@ -112,14 +160,11 @@ function App() {
 
     // arbitrary
     if (checkPalindrome) {
-      const reversed = password.split("").reverse().join("");
-      if (password !== reversed) {
+      if (!isPalindrome(password)) {
         setError(true);
         setErrorMessage(`Password must be a palindrome`);
       }
     }
-
-
 
     if (checkColorInHex) {
       if (!passwordUppercase.includes(color.hex)) {
@@ -148,6 +193,7 @@ function App() {
     checkWord,
     color.hex,
     color.name,
+    emojisRegex,
     fibonacciNumbers,
     minLength,
     password,
